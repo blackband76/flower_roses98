@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Flower Order Calendar - Manage your flower orders with ease">
+    <title>Flower Order Calendar</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">Flower Order Calendar</h1>
+            <p class="app-subtitle">Manage your flower orders and track shipments</p>
+        </header>
+
+        <!-- Calendar -->
+        <main class="calendar-container" id="calendar">
+            <!-- Calendar will be rendered here by JavaScript -->
+        </main>
+
+        <!-- Summary Panel -->
+        <aside class="summary-container" id="summary">
+            <!-- Summary will be rendered here by JavaScript -->
+        </aside>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">New Order</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-grid">
+                        <!-- Row 1: Date, Customer, Status -->
+                        <div class="form-group">
+                            <label class="form-label" for="shippingDate">Shipping Date</label>
+                            <input type="date" id="shippingDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="customerName">Customer Name</label>
+                            <input type="text" id="customerName" class="form-input" placeholder="Enter customer name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="status">Status</label>
+                            <select id="status" class="form-select" required>
+                                <option value="deposit">💰 Deposit Received</option>
+                                <option value="ready_to_ship">📦 Ready to Ship</option>
+                                <option value="shipped">✅ Shipped</option>
+                            </select>
+                        </div>
+
+                        <!-- Row 2: Flower Count, Color, Total Price -->
+                        <div class="form-group">
+                            <label class="form-label" for="flowerCount">Number of Flowers</label>
+                            <input type="number" id="flowerCount" class="form-input" min="1" placeholder="e.g., 12"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="flowerColor">Flower Color</label>
+                            <input type="text" id="flowerColor" class="form-input" placeholder="e.g., Red Rose"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="price">Total Price (฿)</label>
+                            <input type="number" id="price" class="form-input" min="0" step="0.01" placeholder="0.00"
+                                required>
+                        </div>
+
+                        <!-- Row 3: Deposit, Remaining, Shipping -->
+                        <div class="form-group">
+                            <label class="form-label" for="depositAmount">Deposit Amount (฿)</label>
+                            <input type="number" id="depositAmount" class="form-input" min="0" step="0.01"
+                                placeholder="0.00" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Remaining Balance (฿)</label>
+                            <div class="remaining-balance" id="remainingBalance">฿0</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="shippingCost">Shipping Cost (฿)</label>
+                            <input type="number" id="shippingCost" class="form-input" min="0" step="0.01"
+                                placeholder="0.00" required>
+                        </div>
+
+                        <!-- Row 4: Notes (full width) -->
+                        <div class="form-group full-width">
+                            <label class="form-label" for="notes">Notes (Optional)</label>
+                            <textarea id="notes" class="form-textarea"
+                                placeholder="Any special instructions or notes..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-danger" id="deleteBtn" style="display: none;">
+                            🗑️
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="database.js"></script>
+    <script src="calendar.js"></script>
+    <script src="orderForm.js"></script>
+    <script src="summary.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
