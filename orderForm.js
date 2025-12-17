@@ -47,6 +47,16 @@ class OrderForm {
         priceInputs.forEach(selector => {
             this.form.querySelector(selector).addEventListener('input', () => this.updateRemainingBalance());
         });
+
+        // ASAP checkbox - disable/enable use date field
+        const asapCheckbox = this.form.querySelector('#asapCheckbox');
+        const useDateInput = this.form.querySelector('#useDate');
+        asapCheckbox.addEventListener('change', () => {
+            useDateInput.disabled = asapCheckbox.checked;
+            if (asapCheckbox.checked) {
+                useDateInput.value = '';
+            }
+        });
     }
 
     /**
@@ -78,7 +88,10 @@ class OrderForm {
         this.currentOrderId = null;
         this.form.reset();
         this.form.querySelector('#shippingDate').value = date;
-        this.form.querySelector('#depositAmount').value = 0;
+        this.form.querySelector('#useDate').value = '';
+        this.form.querySelector('#useDate').disabled = false;
+        this.form.querySelector('#asapCheckbox').checked = false;
+        this.form.querySelector('#depositAmount').value = '';
         this.modal.querySelector('.modal-title').textContent = 'New Order';
         this.modal.querySelector('#deleteBtn').style.display = 'none';
         this.updateRemainingBalance();
@@ -103,10 +116,15 @@ class OrderForm {
         this.form.querySelector('#flowerCount').value = order.flowerCount;
         this.form.querySelector('#flowerColor').value = order.flowerColor;
         this.form.querySelector('#price').value = order.price;
-        this.form.querySelector('#shippingCost').value = order.shippingCost;
-        this.form.querySelector('#depositAmount').value = order.depositAmount || 0;
+        this.form.querySelector('#shippingCost').value = order.shippingCost || '';
+        this.form.querySelector('#depositAmount').value = order.depositAmount || '';
         this.form.querySelector('#status').value = order.status;
         this.form.querySelector('#notes').value = order.notes || '';
+
+        // Handle useDate and ASAP
+        this.form.querySelector('#useDate').value = order.useDate || '';
+        this.form.querySelector('#asapCheckbox').checked = order.isAsap || false;
+        this.form.querySelector('#useDate').disabled = order.isAsap || false;
 
         this.updateRemainingBalance();
         this.modal.querySelector('.modal-title').textContent = 'Edit Order';
@@ -140,6 +158,8 @@ class OrderForm {
             shippingCost: shippingCost,
             depositAmount: depositAmount,
             remainingBalance: price - depositAmount,
+            useDate: this.form.querySelector('#useDate').value || null,
+            isAsap: this.form.querySelector('#asapCheckbox').checked,
             status: this.form.querySelector('#status').value,
             notes: this.form.querySelector('#notes').value
         };
