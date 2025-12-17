@@ -47,17 +47,24 @@ async function initApp() {
         console.log('Summary initialized');
 
         // Sync summary with calendar navigation
-        const originalPrevMonth = calendar.previousMonth.bind(calendar);
-        const originalNextMonth = calendar.nextMonth.bind(calendar);
+        const originalPrevious = calendar.previous.bind(calendar);
+        const originalNext = calendar.next.bind(calendar);
+        const originalSetViewMode = calendar.setViewMode.bind(calendar);
 
-        calendar.previousMonth = async () => {
-            await originalPrevMonth();
+        calendar.previous = async () => {
+            await originalPrevious();
             summary.setDate(new Date(calendar.currentYear, calendar.currentMonth, 1));
             await summary.refresh();
         };
 
-        calendar.nextMonth = async () => {
-            await originalNextMonth();
+        calendar.next = async () => {
+            await originalNext();
+            summary.setDate(new Date(calendar.currentYear, calendar.currentMonth, 1));
+            await summary.refresh();
+        };
+
+        calendar.setViewMode = async (mode) => {
+            await originalSetViewMode(mode);
             summary.setDate(new Date(calendar.currentYear, calendar.currentMonth, 1));
             await summary.refresh();
         };

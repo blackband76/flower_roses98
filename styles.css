@@ -124,7 +124,7 @@ body {
     background: var(--surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Calendar Header */
@@ -132,14 +132,51 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 1.5rem;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     color: white;
 }
 
+.calendar-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .calendar-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
+    text-align: center;
+}
+
+.calendar-view-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    padding: 3px;
+}
+
+.view-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    transition: var(--transition-fast);
+}
+
+.view-btn.active {
+    background: white;
+    color: var(--primary);
+}
+
+.view-btn:hover:not(.active) {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .nav-btn {
@@ -189,6 +226,7 @@ body {
     grid-template-columns: repeat(7, 1fr);
     gap: 1px;
     background: var(--border-light);
+    overflow: visible;
 }
 
 .calendar-day {
@@ -198,6 +236,7 @@ body {
     cursor: pointer;
     transition: var(--transition-fast);
     position: relative;
+    overflow: visible;
 }
 
 .calendar-day:hover {
@@ -240,18 +279,20 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    overflow: visible;
 }
 
 .order-badge {
-    padding: 4px 8px;
+    padding: 4px 6px;
     border-radius: var(--radius-sm);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition-fast);
     display: flex;
-    align-items: center;
-    gap: 4px;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 3px solid;
 }
 
 .order-badge:hover {
@@ -262,19 +303,61 @@ body {
 .order-badge.status-deposit {
     background: var(--status-deposit-bg);
     color: #f57c00;
-    border-left: 3px solid var(--status-deposit);
+    border-left-color: var(--status-deposit);
 }
 
 .order-badge.status-ready {
     background: var(--status-ready-bg);
     color: #1976d2;
-    border-left: 3px solid var(--status-ready);
+    border-left-color: var(--status-ready);
 }
 
 .order-badge.status-shipped {
     background: var(--status-shipped-bg);
     color: #388e3c;
-    border-left: 3px solid var(--status-shipped);
+    border-left-color: var(--status-shipped);
+}
+
+.badge-row-1 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.badge-name {
+    flex-shrink: 0;
+}
+
+.badge-flowers {
+    font-size: 0.6rem;
+}
+
+.badge-color {
+    font-size: 0.6rem;
+    opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badge-row-2 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.6rem;
+    opacity: 0.85;
+}
+
+.badge-status {
+    flex-shrink: 0;
+}
+
+.badge-notes {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
 }
 
 .order-customer {
@@ -288,6 +371,209 @@ body {
     color: var(--text-hint);
     text-align: center;
     padding: 2px;
+}
+
+/* Order Tooltip on Hover */
+.order-badge {
+    position: relative;
+}
+
+.order-tooltip {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin-left: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    min-width: 220px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: var(--transition-fast);
+    pointer-events: none;
+}
+
+.order-badge:hover .order-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.order-badge:hover {
+    z-index: 999;
+    overflow: visible;
+}
+
+.tooltip-row {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-primary);
+}
+
+.tooltip-row:last-child {
+    border-bottom: none;
+}
+
+.tooltip-row strong {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* Week View Styles */
+.calendar-days.week-view {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.calendar-day.week-day {
+    min-height: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.calendar-day.week-day:last-child {
+    border-bottom: none;
+}
+
+.week-day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 60px;
+    padding-right: 1rem;
+    border-right: 2px solid var(--border-light);
+    margin-right: 1rem;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.week-day-header .day-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1;
+}
+
+.week-day-header .day-month {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.calendar-day.week-day.today .week-day-header {
+    border-right-color: var(--primary);
+}
+
+.calendar-day.week-day.today .day-number {
+    color: var(--primary);
+    background: none;
+    width: auto;
+    height: auto;
+}
+
+.calendar-day.week-day .day-orders {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+/* Order Cards for Week View */
+.order-card {
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-left: 3px solid;
+    position: relative;
+}
+
+.order-card:hover {
+    transform: translateX(2px);
+    box-shadow: var(--shadow-sm);
+    z-index: 999;
+}
+
+.order-card:hover .order-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.order-card.status-deposit {
+    background: var(--status-deposit-bg);
+    border-left-color: var(--status-deposit);
+}
+
+.order-card.status-ready {
+    background: var(--status-ready-bg);
+    border-left-color: var(--status-ready);
+}
+
+.order-card.status-shipped {
+    background: var(--status-shipped-bg);
+    border-left-color: var(--status-shipped);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+}
+
+.order-card-header .order-customer {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+}
+
+.order-status-icon {
+    font-size: 0.75rem;
+}
+
+.order-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.order-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.order-detail .detail-label {
+    font-size: 0.65rem;
+}
+
+.order-detail.remaining {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.order-detail.remaining.paid {
+    color: var(--success);
 }
 
 /* Summary Panel */
@@ -697,6 +983,10 @@ body {
     .summary-container {
         position: static;
     }
+
+    .calendar-day.week-day {
+        min-height: 150px;
+    }
 }
 
 /* Mobile */
@@ -759,6 +1049,46 @@ body {
     }
 
     .more-orders {
+        font-size: 0.6rem;
+    }
+
+    /* Calendar header mobile */
+    .calendar-header-center {
+        gap: 0.35rem;
+    }
+
+    .calendar-view-toggle {
+        padding: 2px;
+    }
+
+    .view-btn {
+        padding: 4px 12px;
+        font-size: 0.7rem;
+    }
+
+    /* Week view mobile */
+    .calendar-days.week-view {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+    }
+
+    .calendar-day.week-day {
+        min-height: 100px;
+        padding: 0.25rem;
+    }
+
+    .week-day-header {
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .week-day-header .day-number {
+        font-size: 0.9rem;
+    }
+
+    .week-day-header .day-month {
         font-size: 0.6rem;
     }
 

@@ -153,6 +153,13 @@ class OrderForm {
 
         const formData = this.getFormData();
 
+        // Validate shipping cost is required when status is shipped
+        if (formData.status === 'shipped' && (!formData.shippingCost || formData.shippingCost <= 0)) {
+            alert('Shipping cost is required when status is "Shipped"');
+            this.form.querySelector('#shippingCost').focus();
+            return;
+        }
+
         try {
             if (this.currentOrderId) {
                 await flowerDB.updateOrder(this.currentOrderId, formData);
