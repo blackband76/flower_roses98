@@ -96,6 +96,7 @@ class OrderForm {
         this.modal.querySelector('#deleteBtn').style.display = 'none';
         this.updateRemainingBalance();
         this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
         this.form.querySelector('#customerName').focus();
     }
 
@@ -131,6 +132,7 @@ class OrderForm {
         this.modal.querySelector('.modal-title').textContent = 'Edit Order';
         this.modal.querySelector('#deleteBtn').style.display = 'block';
         this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
 
     /**
@@ -138,6 +140,7 @@ class OrderForm {
      */
     close() {
         this.modal.classList.remove('active');
+        document.body.style.overflow = '';
         this.form.reset();
         this.currentOrderId = null;
     }
