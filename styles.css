@@ -887,7 +887,7 @@ body {
 
 .form-textarea {
     resize: vertical;
-    min-height: 60px;
+    min-height: 120px;
 }
 
 /* Remaining Balance Display */
