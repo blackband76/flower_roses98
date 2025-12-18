@@ -45,7 +45,17 @@
             <div class="modal-body">
                 <form id="orderForm">
                     <div class="form-grid">
-                        <!-- Row 1: Date, Customer, Status -->
+                        <!-- Row 1: Platform, Date, Customer, Status -->
+                        <div class="form-group">
+                            <label class="form-label" for="platform">Platform</label>
+                            <select id="platform" class="form-select">
+                                <option value="line" selected>💬 Line</option>
+                                <option value="tiktok">🎵 TikTok</option>
+                                <option value="facebook">📘 Facebook</option>
+                                <option value="instagram">📸 Instagram</option>
+                                <option value="other">📱 Other</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label class="form-label" for="shippingDate">Shipping Date</label>
                             <input type="date" id="shippingDate" class="form-input" required>
@@ -54,17 +64,6 @@
                             <label class="form-label" for="customerName">Customer Name</label>
                             <input type="text" id="customerName" class="form-input" placeholder="Enter customer name"
                                 required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="platform">Platform</label>
-                            <select id="platform" class="form-select">
-                                <option value="">-- Select --</option>
-                                <option value="tiktok">🎵 TikTok</option>
-                                <option value="line">💬 Line</option>
-                                <option value="facebook">📘 Facebook</option>
-                                <option value="instagram">📸 Instagram</option>
-                                <option value="other">📱 Other</option>
-                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="status">Status</label>
