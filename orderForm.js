@@ -113,6 +113,7 @@ class OrderForm {
 
         this.form.querySelector('#shippingDate').value = order.shippingDate;
         this.form.querySelector('#customerName').value = order.customerName;
+        this.form.querySelector('#platform').value = order.platform || '';
         this.form.querySelector('#flowerCount').value = order.flowerCount;
         this.form.querySelector('#flowerColor').value = order.flowerColor;
         this.form.querySelector('#price').value = order.price;
@@ -152,6 +153,7 @@ class OrderForm {
         return {
             shippingDate: this.form.querySelector('#shippingDate').value,
             customerName: this.form.querySelector('#customerName').value,
+            platform: this.form.querySelector('#platform').value || null,
             flowerCount: parseInt(this.form.querySelector('#flowerCount').value, 10),
             flowerColor: this.form.querySelector('#flowerColor').value,
             price: price,

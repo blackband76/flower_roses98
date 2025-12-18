@@ -28,6 +28,7 @@ class FlowerDatabase {
         return {
             shipping_date: orderData.shippingDate,
             customer_name: orderData.customerName,
+            platform: orderData.platform || null,
             flower_count: orderData.flowerCount,
             flower_color: orderData.flowerColor,
             price: orderData.price || 0,
@@ -49,6 +50,7 @@ class FlowerDatabase {
             id: row.id,
             shippingDate: row.shipping_date,
             customerName: row.customer_name,
+            platform: row.platform,
             flowerCount: row.flower_count,
             flowerColor: row.flower_color,
             price: row.price,
