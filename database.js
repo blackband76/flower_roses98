@@ -38,6 +38,7 @@ class FlowerDatabase {
             use_date: orderData.useDate || null,
             is_asap: orderData.isAsap || false,
             status: orderData.status || 'deposit',
+            shipping_address: orderData.shippingAddress || null,
             notes: orderData.notes || null
         };
     }
@@ -60,6 +61,7 @@ class FlowerDatabase {
             useDate: row.use_date,
             isAsap: row.is_asap,
             status: row.status,
+            shippingAddress: row.shipping_address,
             notes: row.notes,
             createdAt: row.created_at
         };

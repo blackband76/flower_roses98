@@ -848,7 +848,14 @@ body {
     gap: 1rem;
 }
 
-.form-grid .full-width {
+.form-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.form-grid .full-width,
+.form-grid-4 .full-width {
     grid-column: 1 / -1;
 }
 
@@ -1020,6 +1027,10 @@ body {
     }
 
     .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid-4 {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -1239,7 +1250,13 @@ body {
         gap: 0.75rem;
     }
 
-    .form-grid .full-width {
+    .form-grid-4 {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .form-grid .full-width,
+    .form-grid-4 .full-width {
         grid-column: 1;
     }
 

@@ -44,8 +44,8 @@
             </div>
             <div class="modal-body">
                 <form id="orderForm">
-                    <div class="form-grid">
-                        <!-- Row 1: Customer Name, Shipping Date, Use Date -->
+                    <div class="form-grid-4">
+                        <!-- Row 1: Customer Name, Shipping Date, Use Date, Status -->
                         <div class="form-group">
                             <label class="form-label" for="customerName">Customer Name</label>
                             <input type="text" id="customerName" class="form-input" placeholder="Enter customer name"
@@ -64,8 +64,16 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label" for="status">Status</label>
+                            <select id="status" class="form-select" required>
+                                <option value="deposit">💰 Deposit Received</option>
+                                <option value="ready_to_ship">📦 Ready to Ship</option>
+                                <option value="shipped">✅ Shipped</option>
+                            </select>
+                        </div>
 
-                        <!-- Row 2: Number of Flowers, Flower Color, Status -->
+                        <!-- Row 2: Flower Count, Flower Color, Platform, Remaining Balance -->
                         <div class="form-group">
                             <label class="form-label" for="flowerCount">Number of Flowers</label>
                             <input type="number" id="flowerCount" class="form-input" min="1" placeholder="e.g., 12"
@@ -77,12 +85,18 @@
                                 required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="status">Status</label>
-                            <select id="status" class="form-select" required>
-                                <option value="deposit">💰 Deposit Received</option>
-                                <option value="ready_to_ship">📦 Ready to Ship</option>
-                                <option value="shipped">✅ Shipped</option>
+                            <label class="form-label" for="platform">Platform</label>
+                            <select id="platform" class="form-select">
+                                <option value="line" selected>💬 Line</option>
+                                <option value="tiktok">🎵 TikTok</option>
+                                <option value="facebook">📘 Facebook</option>
+                                <option value="instagram">� Instagram</option>
+                                <option value="other">📱 Other</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Remaining Balance (฿)</label>
+                            <div class="remaining-balance" id="remainingBalance">฿0</div>
                         </div>
 
                         <!-- Row 3: Total Price, Deposit Amount, Shipping Cost -->
@@ -101,23 +115,14 @@
                             <input type="number" id="shippingCost" class="form-input" min="0" step="0.01"
                                 placeholder="0.00">
                         </div>
-
-                        <!-- Row 4: Remaining Balance, Platform -->
-                        <div class="form-group">
-                            <label class="form-label">Remaining Balance (฿)</label>
-                            <div class="remaining-balance" id="remainingBalance">฿0</div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="platform">Platform</label>
-                            <select id="platform" class="form-select">
-                                <option value="line" selected>💬 Line</option>
-                                <option value="tiktok">🎵 TikTok</option>
-                                <option value="facebook">📘 Facebook</option>
-                                <option value="instagram">📸 Instagram</option>
-                                <option value="other">📱 Other</option>
-                            </select>
-                        </div>
                         <div class="form-group"></div>
+
+                        <!-- Row 4: Shipping Address (full width) -->
+                        <div class="form-group full-width">
+                            <label class="form-label" for="shippingAddress">Shipping Address</label>
+                            <textarea id="shippingAddress" class="form-textarea" rows="2"
+                                placeholder="Enter shipping address..."></textarea>
+                        </div>
 
                         <!-- Row 5: Notes (full width) -->
                         <div class="form-group full-width">

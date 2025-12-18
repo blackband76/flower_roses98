@@ -121,6 +121,7 @@ class OrderForm {
         this.form.querySelector('#shippingCost').value = order.shippingCost || '';
         this.form.querySelector('#depositAmount').value = order.depositAmount || '';
         this.form.querySelector('#status').value = order.status;
+        this.form.querySelector('#shippingAddress').value = order.shippingAddress || '';
         this.form.querySelector('#notes').value = order.notes || '';
 
         // Handle useDate and ASAP
@@ -166,6 +167,7 @@ class OrderForm {
             useDate: this.form.querySelector('#useDate').value || null,
             isAsap: this.form.querySelector('#asapCheckbox').checked,
             status: this.form.querySelector('#status').value,
+            shippingAddress: this.form.querySelector('#shippingAddress').value || null,
             notes: this.form.querySelector('#notes').value
         };
     }
