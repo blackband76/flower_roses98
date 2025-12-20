@@ -17,6 +17,21 @@ async function initApp() {
         await flowerDB.init();
         console.log('Database initialized');
 
+        // Check authentication
+        const user = flowerDB.checkAuth();
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Display username
+        document.getElementById('userEmail').textContent = user.username;
+
+        // Setup logout button
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            flowerDB.logout();
+        });
+
         // Initialize calendar
         calendar = new CalendarComponent('calendar');
         calendar.onDateClick = (date) => {
@@ -76,7 +91,7 @@ async function initApp() {
             <div style="padding: 2rem; text-align: center;">
                 <h2>Error Loading Application</h2>
                 <p>${error.message}</p>
-                <p>Please ensure your browser supports IndexedDB.</p>
+                <p><a href="login.html">Go to Login</a></p>
             </div>
         `;
     }
@@ -84,3 +99,4 @@ async function initApp() {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initApp);
+

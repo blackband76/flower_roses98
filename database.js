@@ -22,6 +22,30 @@ class FlowerDatabase {
     }
 
     /**
+     * Check if user is logged in
+     */
+    checkAuth() {
+        const user = localStorage.getItem('flower_user');
+        return user ? JSON.parse(user) : null;
+    }
+
+    /**
+     * Get current user
+     */
+    getCurrentUser() {
+        const user = localStorage.getItem('flower_user');
+        return user ? JSON.parse(user) : null;
+    }
+
+    /**
+     * Logout user
+     */
+    logout() {
+        localStorage.removeItem('flower_user');
+        window.location.href = 'login.html';
+    }
+
+    /**
      * Convert JS camelCase to DB snake_case
      */
     toDbFormat(orderData) {
@@ -71,7 +95,13 @@ class FlowerDatabase {
      * Add a new order
      */
     async addOrder(orderData) {
-        const dbData = this.toDbFormat(orderData);
+        const user = this.getCurrentUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const dbData = {
+            ...this.toDbFormat(orderData),
+            user_id: user.id
+        };
 
         const { data, error } = await this.supabase
             .from('orders')
@@ -106,12 +136,16 @@ class FlowerDatabase {
     }
 
     /**
-     * Get all orders
+     * Get all orders for current user
      */
     async getAllOrders() {
+        const user = this.getCurrentUser();
+        if (!user) return [];
+
         const { data, error } = await this.supabase
             .from('orders')
             .select('*')
+            .eq('user_id', user.id)
             .order('shipping_date', { ascending: true });
 
         if (error) {
@@ -126,12 +160,16 @@ class FlowerDatabase {
      * Get orders for a specific month
      */
     async getOrdersByMonth(year, month) {
+        const user = this.getCurrentUser();
+        if (!user) return [];
+
         const startDate = new Date(year, month, 1).toISOString().split('T')[0];
         const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
         const { data, error } = await this.supabase
             .from('orders')
             .select('*')
+            .eq('user_id', user.id)
             .gte('shipping_date', startDate)
             .lte('shipping_date', endDate)
             .order('shipping_date', { ascending: true });
@@ -148,9 +186,13 @@ class FlowerDatabase {
      * Get orders within a date range
      */
     async getOrdersByDateRange(startDate, endDate) {
+        const user = this.getCurrentUser();
+        if (!user) return [];
+
         const { data, error } = await this.supabase
             .from('orders')
             .select('*')
+            .eq('user_id', user.id)
             .gte('shipping_date', startDate)
             .lte('shipping_date', endDate)
             .order('shipping_date', { ascending: true });
