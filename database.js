@@ -163,8 +163,12 @@ class FlowerDatabase {
         const user = this.getCurrentUser();
         if (!user) return [];
 
-        const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-        const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+        // Use local date formatting to avoid timezone issues
+        const startDay = new Date(year, month, 1);
+        const endDay = new Date(year, month + 1, 0);
+
+        const startDate = `${startDay.getFullYear()}-${String(startDay.getMonth() + 1).padStart(2, '0')}-${String(startDay.getDate()).padStart(2, '0')}`;
+        const endDate = `${endDay.getFullYear()}-${String(endDay.getMonth() + 1).padStart(2, '0')}-${String(endDay.getDate()).padStart(2, '0')}`;
 
         const { data, error } = await this.supabase
             .from('orders')
