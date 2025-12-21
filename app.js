@@ -119,7 +119,8 @@ async function checkForUpdates() {
             // First time - save version
             localStorage.setItem(APP_VERSION_KEY, data.version);
         } else if (currentVersion !== data.version) {
-            // New version available - show modal
+            // New version available - show modal with changes
+            document.getElementById('updateChanges').textContent = data.changes || 'Bug fixes and improvements';
             document.getElementById('updateModal').classList.add('show');
         }
     } catch (error) {

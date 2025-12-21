@@ -376,7 +376,8 @@ class CalendarComponent {
         }
 
         if (orders.length > maxShow) {
-            html += `<div class="more-orders">+${orders.length - maxShow} more</div>`;
+            const dateStr = orders[0].shippingDate;
+            html += `<div class="more-orders" data-date="${dateStr}">+${orders.length - maxShow} more</div>`;
         }
 
         return html;
@@ -484,6 +485,15 @@ class CalendarComponent {
         const days = this.container.querySelectorAll('.calendar-day:not(.empty)');
         days.forEach(day => {
             day.addEventListener('click', (e) => {
+                // Check if clicking on "more orders" indicator
+                const moreElement = e.target.closest('.more-orders');
+                if (moreElement && this.viewMode === 'month') {
+                    e.stopPropagation();
+                    const date = moreElement.dataset.date;
+                    this.goToWeekWithDate(date);
+                    return;
+                }
+
                 // Check if clicking on an order badge or order card
                 const orderElement = e.target.closest('.order-badge, .order-card');
                 if (orderElement && this.onOrderClick) {
@@ -500,6 +510,19 @@ class CalendarComponent {
                 }
             });
         });
+    }
+
+    /**
+     * Go to week view for a specific date
+     */
+    async goToWeekWithDate(dateStr) {
+        const date = new Date(dateStr);
+        this.currentWeekStart = this.getWeekStart(date);
+        this.currentYear = this.currentWeekStart.getFullYear();
+        this.currentMonth = this.currentWeekStart.getMonth();
+        this.viewMode = 'week';
+        this.render();
+        await this.loadOrders();
     }
 
     /**
