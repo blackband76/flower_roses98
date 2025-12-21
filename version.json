@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "updated": "2025-12-22",
-  "changes": "Fixed refresh not saving version + centered refresh button"
+  "changes": "Added week/month navigation arrows in Revenue Summary"
 }

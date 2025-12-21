@@ -160,7 +160,11 @@ class SummaryComponent {
                 </div>
             </div>
             
-            <div class="period-label">${periodLabel}</div>
+            <div class="period-nav">
+                <button class="period-nav-btn" id="summaryPrev">‹</button>
+                <div class="period-label">${periodLabel}</div>
+                <button class="period-nav-btn" id="summaryNext">›</button>
+            </div>
             
             <div class="summary-stats">
                 <div class="stat-card total">
@@ -238,6 +242,41 @@ class SummaryComponent {
                 this.toggleView(view);
             });
         });
+
+        // Navigation buttons
+        const prevBtn = this.container.querySelector('#summaryPrev');
+        const nextBtn = this.container.querySelector('#summaryNext');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.previousPeriod());
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.nextPeriod());
+        }
+    }
+
+    /**
+     * Navigate to previous period
+     */
+    async previousPeriod() {
+        if (this.currentView === 'week') {
+            this.currentDate.setDate(this.currentDate.getDate() - 7);
+        } else {
+            this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+        }
+        await this.render();
+    }
+
+    /**
+     * Navigate to next period
+     */
+    async nextPeriod() {
+        if (this.currentView === 'week') {
+            this.currentDate.setDate(this.currentDate.getDate() + 7);
+        } else {
+            this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+        }
+        await this.render();
     }
 
     /**
@@ -251,6 +290,6 @@ class SummaryComponent {
      * Set current date (for syncing with calendar)
      */
     setDate(date) {
-        this.currentDate = date;
+        this.currentDate = new Date(date);
     }
 }
