@@ -128,8 +128,20 @@ async function checkForUpdates() {
     }
 }
 
-// Check for updates periodically
-setInterval(checkForUpdates, VERSION_CHECK_INTERVAL);
+// Sync version on page load (after refresh, save new version)
+async function syncVersion() {
+    try {
+        const response = await fetch(`version.json?t=${Date.now()}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        localStorage.setItem(APP_VERSION_KEY, data.version);
+    } catch (error) {
+        console.log('Version sync failed:', error);
+    }
+}
 
-// Also check on page load after a short delay
-setTimeout(checkForUpdates, 5000);
+// Sync version immediately on page load
+syncVersion();
+
+// Check for updates periodically (starts after 60 seconds)
+setInterval(checkForUpdates, VERSION_CHECK_INTERVAL);

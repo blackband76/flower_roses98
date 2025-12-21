@@ -1121,6 +1121,8 @@ body {
 .update-modal-content .btn {
     flex: none;
     padding: 0.75rem 2rem;
+    margin: 0 auto;
+    display: block;
 }
 
 /* Responsive Adjustments */
