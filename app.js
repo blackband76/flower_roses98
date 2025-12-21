@@ -100,3 +100,35 @@ async function initApp() {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initApp);
 
+/**
+ * Version checker for update notifications
+ */
+const APP_VERSION_KEY = 'flower_app_version';
+const VERSION_CHECK_INTERVAL = 60000; // Check every 60 seconds
+
+async function checkForUpdates() {
+    try {
+        // Add cache-busting query param
+        const response = await fetch(`version.json?t=${Date.now()}`);
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const currentVersion = localStorage.getItem(APP_VERSION_KEY);
+
+        if (!currentVersion) {
+            // First time - save version
+            localStorage.setItem(APP_VERSION_KEY, data.version);
+        } else if (currentVersion !== data.version) {
+            // New version available - show modal
+            document.getElementById('updateModal').classList.add('show');
+        }
+    } catch (error) {
+        console.log('Version check failed:', error);
+    }
+}
+
+// Check for updates periodically
+setInterval(checkForUpdates, VERSION_CHECK_INTERVAL);
+
+// Also check on page load after a short delay
+setTimeout(checkForUpdates, 5000);

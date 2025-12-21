@@ -64,18 +64,11 @@ class CalendarComponent {
     async setViewMode(mode) {
         this.viewMode = mode;
         if (mode === 'week') {
-            // Find the first week with orders in current month
-            const monthOrders = await flowerDB.getOrdersByMonth(this.currentYear, this.currentMonth);
-
-            if (monthOrders.length > 0) {
-                // Sort orders by date and get the first one
-                const sortedOrders = monthOrders.sort((a, b) => a.shippingDate.localeCompare(b.shippingDate));
-                const firstOrderDate = new Date(sortedOrders[0].shippingDate);
-                this.currentWeekStart = this.getWeekStart(firstOrderDate);
-            } else {
-                // No orders, default to first week of month
-                this.currentWeekStart = this.getWeekStart(new Date(this.currentYear, this.currentMonth, 1));
-            }
+            // Switch to current week
+            this.currentWeekStart = this.getWeekStart(new Date());
+            // Update year/month to match current week
+            this.currentYear = this.currentWeekStart.getFullYear();
+            this.currentMonth = this.currentWeekStart.getMonth();
         }
         this.render();
         await this.loadOrders();
