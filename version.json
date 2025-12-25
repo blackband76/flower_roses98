@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
-  "updated": "2025-12-22",
-  "changes": "Added week/month navigation arrows in Revenue Summary"
+  "version": "1.0.4",
+  "updated": "2025-12-25",
+  "changes": "Fixed week view not showing orders, allow zero shipping cost"
 }

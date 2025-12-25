@@ -51,8 +51,8 @@ class CalendarComponent {
         if (this.viewMode === 'month') {
             this.orders = await flowerDB.getOrdersByMonth(this.currentYear, this.currentMonth);
         } else {
-            const startDate = this.currentWeekStart.toISOString().split('T')[0];
-            const endDate = this.getWeekEnd(this.currentWeekStart).toISOString().split('T')[0];
+            const startDate = this.formatDateStr(this.currentWeekStart);
+            const endDate = this.formatDateStr(this.getWeekEnd(this.currentWeekStart));
             this.orders = await flowerDB.getOrdersByDateRange(startDate, endDate);
         }
         this.renderDays();
