@@ -232,7 +232,6 @@ class OrderForm {
         // Load alphabet stock and render UI
         await this.loadAlphabetStock();
         this.renderAlphabetTags();
-        document.getElementById('alphabetQty').value = '1';
 
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -275,7 +274,6 @@ class OrderForm {
         // Load alphabet stock and render
         await this.loadAlphabetStock();
         this.renderAlphabetTags();
-        document.getElementById('alphabetQty').value = '1';
 
         this.updateRemainingBalance();
         this.modal.querySelector('.modal-title').textContent = 'Edit Order';
