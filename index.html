@@ -25,8 +25,17 @@
                 <p class="app-subtitle">Manage your flower orders and track shipments</p>
             </div>
             <div class="header-right">
-                <span class="user-email" id="userEmail"></span>
-                <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <button class="user-dropdown-trigger" id="userDropdownTrigger">
+                        <span class="user-email" id="userEmail"></span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a href="alphabet-stock.html" class="dropdown-item">🔤 Alphabet Stock</a>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item" id="logoutBtn">🚪 Logout</button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -123,7 +132,24 @@
                         </div>
                         <div class="form-group"></div>
 
-                        <!-- Row 4: Notes (full width) -->
+                        <!-- Row 4: Alphabet Decorations -->
+                        <div class="form-group span-2">
+                            <label class="form-label">Add Character</label>
+                            <div class="alphabet-add-section">
+                                <select class="form-select alphabet-select" id="alphabetSelect">
+                                    <option value="">Select...</option>
+                                </select>
+                                <input type="number" class="form-input alphabet-qty" id="alphabetQty" min="1" value="1">
+                            </div>
+                        </div>
+                        <div class="form-group span-2">
+                            <label class="form-label">Selected Decorations</label>
+                            <div class="alphabet-decorations" id="alphabetDecorations">
+                                <!-- Alphabet tags will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Notes (full width) -->
                         <div class="form-group full-width">
                             <label class="form-label" for="notes">Notes (Optional)</label>
                             <textarea id="notes" class="form-textarea"

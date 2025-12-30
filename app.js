@@ -27,6 +27,20 @@ async function initApp() {
         // Display username
         document.getElementById('userEmail').textContent = user.username;
 
+        // Setup user dropdown
+        const userDropdown = document.getElementById('userDropdown');
+        const dropdownTrigger = document.getElementById('userDropdownTrigger');
+
+        dropdownTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdown.classList.remove('open');
+        });
+
         // Setup logout button
         document.getElementById('logoutBtn').addEventListener('click', () => {
             flowerDB.logout();

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
-  "updated": "2025-12-25",
-  "changes": "Fixed week view not showing orders, allow zero shipping cost"
+  "version": "1.1.0",
+  "updated": "2025-12-29",
+  "changes": "Added Alphabet Stock feature for letter/symbol decorations on orders"
 }

@@ -63,7 +63,8 @@ class FlowerDatabase {
             is_asap: orderData.isAsap || false,
             status: orderData.status || 'deposit',
             shipping_address: orderData.shippingAddress || null,
-            notes: orderData.notes || null
+            notes: orderData.notes || null,
+            alphabet_decorations: orderData.alphabetDecorations || null
         };
     }
 
@@ -87,6 +88,7 @@ class FlowerDatabase {
             status: row.status,
             shippingAddress: row.shipping_address,
             notes: row.notes,
+            alphabetDecorations: row.alphabet_decorations,
             createdAt: row.created_at
         };
     }
@@ -245,6 +247,152 @@ class FlowerDatabase {
         }
 
         return true;
+    }
+
+    // ========================================
+    // Alphabet Stock Methods
+    // ========================================
+
+    /**
+     * Get all alphabet stock for current user
+     */
+    async getAlphabetStock() {
+        const user = this.getCurrentUser();
+        if (!user) return [];
+
+        const { data, error } = await this.supabase
+            .from('alphabet_stock')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('character', { ascending: true });
+
+        if (error) {
+            console.error('Error getting alphabet stock:', error);
+            return [];
+        }
+
+        return data.map(row => ({
+            id: row.id,
+            character: row.character,
+            quantity: row.quantity,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        }));
+    }
+
+    /**
+     * Add a new alphabet item
+     */
+    async addAlphabetItem(character, quantity = 0) {
+        const user = this.getCurrentUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const { data, error } = await this.supabase
+            .from('alphabet_stock')
+            .insert([{
+                user_id: user.id,
+                character: character,
+                quantity: quantity
+            }])
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error adding alphabet item:', error);
+            throw error;
+        }
+
+        return {
+            id: data.id,
+            character: data.character,
+            quantity: data.quantity
+        };
+    }
+
+    /**
+     * Update alphabet item quantity
+     */
+    async updateAlphabetQuantity(id, quantity) {
+        const { data, error } = await this.supabase
+            .from('alphabet_stock')
+            .update({ quantity: quantity, updated_at: new Date().toISOString() })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating alphabet quantity:', error);
+            throw error;
+        }
+
+        return {
+            id: data.id,
+            character: data.character,
+            quantity: data.quantity
+        };
+    }
+
+    /**
+     * Delete an alphabet item
+     */
+    async deleteAlphabetItem(id) {
+        const { error } = await this.supabase
+            .from('alphabet_stock')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error deleting alphabet item:', error);
+            throw error;
+        }
+
+        return true;
+    }
+
+    /**
+     * Deduct alphabet stock when order is saved
+     * @param {Array} alphabetsUsed - Array of {character, quantity} objects
+     */
+    async deductAlphabetStock(alphabetsUsed) {
+        if (!alphabetsUsed || alphabetsUsed.length === 0) return;
+
+        const user = this.getCurrentUser();
+        if (!user) throw new Error('Not authenticated');
+
+        // Get current stock
+        const stock = await this.getAlphabetStock();
+        const stockMap = new Map(stock.map(s => [s.character, s]));
+
+        for (const item of alphabetsUsed) {
+            const stockItem = stockMap.get(item.character);
+            if (stockItem) {
+                const newQuantity = Math.max(0, stockItem.quantity - item.quantity);
+                await this.updateAlphabetQuantity(stockItem.id, newQuantity);
+            }
+        }
+    }
+
+    /**
+     * Restore alphabet stock when order is deleted or edited
+     * @param {Array} alphabetsUsed - Array of {character, quantity} objects
+     */
+    async restoreAlphabetStock(alphabetsUsed) {
+        if (!alphabetsUsed || alphabetsUsed.length === 0) return;
+
+        const user = this.getCurrentUser();
+        if (!user) throw new Error('Not authenticated');
+
+        // Get current stock
+        const stock = await this.getAlphabetStock();
+        const stockMap = new Map(stock.map(s => [s.character, s]));
+
+        for (const item of alphabetsUsed) {
+            const stockItem = stockMap.get(item.character);
+            if (stockItem) {
+                const newQuantity = stockItem.quantity + item.quantity;
+                await this.updateAlphabetQuantity(stockItem.id, newQuantity);
+            }
+        }
     }
 }
 

@@ -10,6 +10,9 @@ class OrderForm {
         this.currentOrderId = null;
         this.onSave = null;
         this.onDelete = null;
+        this.alphabetStock = [];
+        this.selectedAlphabets = []; // Store selected alphabets as array
+        this.originalAlphabets = null; // Store original alphabets when editing
     }
 
     /**
@@ -57,6 +60,137 @@ class OrderForm {
                 useDateInput.value = '';
             }
         });
+
+        // Auto-add alphabet when dropdown changes
+        document.getElementById('alphabetSelect').addEventListener('change', () => this.addSelectedAlphabet());
+    }
+
+    /**
+     * Load alphabet stock from database
+     */
+    async loadAlphabetStock() {
+        this.alphabetStock = await flowerDB.getAlphabetStock();
+        this.updateAlphabetDropdown();
+    }
+
+    /**
+     * Update the alphabet dropdown options
+     */
+    updateAlphabetDropdown() {
+        const select = document.getElementById('alphabetSelect');
+
+        // Calculate available stock considering already selected items
+        const selectedMap = new Map();
+        this.selectedAlphabets.forEach(item => {
+            selectedMap.set(item.character, (selectedMap.get(item.character) || 0) + item.quantity);
+        });
+
+        const options = this.alphabetStock
+            .map(s => {
+                const used = selectedMap.get(s.character) || 0;
+                const available = s.quantity - used;
+                if (available <= 0) return null;
+                return `<option value="${this.escapeHtml(s.character)}">${this.escapeHtml(s.character)} (${available})</option>`;
+            })
+            .filter(Boolean)
+            .join('');
+
+        select.innerHTML = `<option value="">Select...</option>${options}`;
+    }
+
+    /**
+     * Add selected alphabet from dropdown
+     */
+    addSelectedAlphabet() {
+        const select = document.getElementById('alphabetSelect');
+        const qtyInput = document.getElementById('alphabetQty');
+
+        const character = select.value;
+        const quantity = parseInt(qtyInput.value) || 1;
+
+        if (!character) {
+            return;
+        }
+
+        // Check if there's enough stock
+        const stockItem = this.alphabetStock.find(s => s.character === character);
+        const alreadySelected = this.selectedAlphabets
+            .filter(s => s.character === character)
+            .reduce((sum, s) => sum + s.quantity, 0);
+
+        if (stockItem && (alreadySelected + quantity) > stockItem.quantity) {
+            alert(`Not enough stock for "${character}". Available: ${stockItem.quantity - alreadySelected}`);
+            return;
+        }
+
+        // Check if already exists, if so add to quantity
+        const existing = this.selectedAlphabets.find(s => s.character === character);
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            this.selectedAlphabets.push({ character, quantity });
+        }
+
+        // Reset inputs
+        select.value = '';
+        qtyInput.value = '1';
+
+        // Re-render
+        this.renderAlphabetTags();
+        this.updateAlphabetDropdown();
+    }
+
+    /**
+     * Remove alphabet from selection
+     */
+    removeAlphabet(index) {
+        this.selectedAlphabets.splice(index, 1);
+        this.renderAlphabetTags();
+        this.updateAlphabetDropdown();
+    }
+
+    /**
+     * Render alphabet tags
+     */
+    renderAlphabetTags() {
+        const container = document.getElementById('alphabetDecorations');
+
+        if (this.selectedAlphabets.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = this.selectedAlphabets.map((item, index) => `
+            <span class="alphabet-tag">
+                <span class="tag-char">${this.escapeHtml(item.character)}</span>
+                <span class="tag-qty">×${item.quantity}</span>
+                <button type="button" class="tag-remove" data-index="${index}">×</button>
+            </span>
+        `).join('');
+
+        // Add remove handlers
+        container.querySelectorAll('.tag-remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.removeAlphabet(parseInt(btn.dataset.index));
+            });
+        });
+    }
+
+    /**
+     * Get selected alphabets
+     */
+    getSelectedAlphabets() {
+        return this.selectedAlphabets.length > 0 ? [...this.selectedAlphabets] : null;
+    }
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     /**
@@ -84,8 +218,10 @@ class OrderForm {
     /**
      * Open modal for new order
      */
-    openNew(date) {
+    async openNew(date) {
         this.currentOrderId = null;
+        this.originalAlphabets = null;
+        this.selectedAlphabets = [];
         this.form.reset();
         this.form.querySelector('#shippingDate').value = date;
         this.form.querySelector('#useDate').value = '';
@@ -95,6 +231,12 @@ class OrderForm {
         this.modal.querySelector('.modal-title').textContent = 'New Order';
         this.modal.querySelector('#deleteBtn').style.display = 'none';
         this.updateRemainingBalance();
+
+        // Load alphabet stock and render UI
+        await this.loadAlphabetStock();
+        this.renderAlphabetTags();
+        document.getElementById('alphabetQty').value = '1';
+
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         this.form.querySelector('#customerName').focus();
@@ -129,6 +271,15 @@ class OrderForm {
         this.form.querySelector('#asapCheckbox').checked = order.isAsap || false;
         this.form.querySelector('#useDate').disabled = order.isAsap || false;
 
+        // Store original alphabets for stock restoration
+        this.originalAlphabets = order.alphabetDecorations ? JSON.parse(JSON.stringify(order.alphabetDecorations)) : null;
+        this.selectedAlphabets = order.alphabetDecorations ? [...order.alphabetDecorations] : [];
+
+        // Load alphabet stock and render
+        await this.loadAlphabetStock();
+        this.renderAlphabetTags();
+        document.getElementById('alphabetQty').value = '1';
+
         this.updateRemainingBalance();
         this.modal.querySelector('.modal-title').textContent = 'Edit Order';
         this.modal.querySelector('#deleteBtn').style.display = 'block';
@@ -144,6 +295,9 @@ class OrderForm {
         document.body.style.overflow = '';
         this.form.reset();
         this.currentOrderId = null;
+        this.originalAlphabets = null;
+        this.selectedAlphabets = [];
+        document.getElementById('alphabetDecorations').innerHTML = '';
     }
 
     /**
@@ -168,7 +322,8 @@ class OrderForm {
             isAsap: this.form.querySelector('#asapCheckbox').checked,
             status: this.form.querySelector('#status').value,
             shippingAddress: this.form.querySelector('#shippingAddress').value || null,
-            notes: this.form.querySelector('#notes').value
+            notes: this.form.querySelector('#notes').value,
+            alphabetDecorations: this.getSelectedAlphabets()
         };
     }
 
@@ -189,9 +344,18 @@ class OrderForm {
 
         try {
             if (this.currentOrderId) {
+                // Restore original alphabets first, then deduct new ones
+                if (this.originalAlphabets) {
+                    await flowerDB.restoreAlphabetStock(this.originalAlphabets);
+                }
                 await flowerDB.updateOrder(this.currentOrderId, formData);
             } else {
                 await flowerDB.addOrder(formData);
+            }
+
+            // Deduct new alphabet stock
+            if (formData.alphabetDecorations) {
+                await flowerDB.deductAlphabetStock(formData.alphabetDecorations);
             }
 
             this.close();
@@ -215,6 +379,11 @@ class OrderForm {
         if (!confirmed) return;
 
         try {
+            // Restore alphabet stock before deleting
+            if (this.originalAlphabets) {
+                await flowerDB.restoreAlphabetStock(this.originalAlphabets);
+            }
+
             await flowerDB.deleteOrder(this.currentOrderId);
             this.close();
 
