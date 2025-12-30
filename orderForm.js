@@ -103,10 +103,7 @@ class OrderForm {
      */
     addSelectedAlphabet() {
         const select = document.getElementById('alphabetSelect');
-        const qtyInput = document.getElementById('alphabetQty');
-
         const character = select.value;
-        const quantity = parseInt(qtyInput.value) || 1;
 
         if (!character) {
             return;
@@ -118,22 +115,22 @@ class OrderForm {
             .filter(s => s.character === character)
             .reduce((sum, s) => sum + s.quantity, 0);
 
-        if (stockItem && (alreadySelected + quantity) > stockItem.quantity) {
-            alert(`Not enough stock for "${character}". Available: ${stockItem.quantity - alreadySelected}`);
+        if (stockItem && (alreadySelected + 1) > stockItem.quantity) {
+            alert(`No more stock for "${character}"`);
+            select.value = '';
             return;
         }
 
         // Check if already exists, if so add to quantity
         const existing = this.selectedAlphabets.find(s => s.character === character);
         if (existing) {
-            existing.quantity += quantity;
+            existing.quantity += 1;
         } else {
-            this.selectedAlphabets.push({ character, quantity });
+            this.selectedAlphabets.push({ character, quantity: 1 });
         }
 
-        // Reset inputs
+        // Reset dropdown
         select.value = '';
-        qtyInput.value = '1';
 
         // Re-render
         this.renderAlphabetTags();
